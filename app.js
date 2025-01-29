@@ -47,3 +47,18 @@ process.on("SIGTERM", () => {
   console.debug("Recieved SIGTERM/(nodemon restarts)");
   shutDown();
 });
+
+process.on("uncaughtException", () => {
+  console.debug("Recieved Uncaught Exception");
+  shutDown();
+});
+
+process.on("uncaughtExceptionMonitor", () => {
+  console.debug("Recieved Uncaught Exception Monitor");
+  shutDown();
+});
+
+process.on("unhandledRejection", () => {
+  console.debug("Recieved unhandled Rejection");
+  shutDown();
+});
