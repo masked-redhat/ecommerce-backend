@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { db } from "./connect.js";
 
-const closeNoSqlConnection = () => {
+const closeNoSqlConnection = async () => {
   try {
-    mongoose.connection.close();
+    await mongoose.connection.close();
 
     console.log("Closed Mongo Db");
   } catch (err) {
@@ -12,9 +12,9 @@ const closeNoSqlConnection = () => {
   }
 };
 
-const closeSqlConnection = () => {
+const closeSqlConnection = async () => {
   try {
-    db.close();
+    await db.close();
 
     console.log("Closed Sql Db");
   } catch (err) {
