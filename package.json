@@ -1,11 +1,22 @@
 {
-    "name": "express-setup",
+    "name": "ecommerce-backend",
     "version": "1.0.0",
-    "description": "express backend setup for projects with no sql and sql databases",
+    "description": "Ecommerce backend handling product, cart, payment functionalities and user management and authentication",
+    "homepage": "https://github.com/masked-redhat/ecommerce-backend#readme",
+    "bugs": {
+        "url": "https://github.com/masked-redhat/ecommerce-backend/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/masked-redhat/ecommerce-backend.git"
+    },
     "license": "ISC",
     "author": "masked-redhat",
     "type": "module",
     "main": "app.js",
+    "directories": {
+        "test": "test"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "npm i",
