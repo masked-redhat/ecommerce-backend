@@ -16,7 +16,7 @@ app.use(helmet()); // security measures
 // public folder
 app.use(express.static(_env.app.PUBLIC));
 
-// disablint x-powered-by
+// disabling x-powered-by
 app.disable("x-powered-by");
 
 // Connect to databases
