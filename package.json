@@ -32,6 +32,7 @@
     },
     "devDependencies": {
         "dotenv": "latest",
+        "helmet": "^8.0.0",
         "nodemon": "latest"
     }
 }

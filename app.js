@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 import _env from "./constants/env.js"; // env variables
 import cookieParser from "cookie-parser";
 import _connect from "./db/connect.js";
@@ -8,11 +9,15 @@ import _close from "./db/close.js";
 const app = express();
 const port = _env.app.PORT;
 
-// application can use cookies
-app.use(cookieParser());
+// middlewares
+app.use(cookieParser()); // application can use cookies
+app.use(helmet()); // security measures
 
 // public folder
 app.use(express.static(_env.app.PUBLIC));
+
+// disablint x-powered-by
+app.disable("x-powered-by");
 
 // Connect to databases
 _connect.mongo();
