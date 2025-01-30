@@ -1,0 +1,19 @@
+{
+    "watch": [
+        "routes",
+        "utils",
+        "middlewares",
+        "db",
+        "controllers",
+        "constants",
+        "app.js",
+        "package.json"
+    ],
+    "ignore": [
+        "node_modules",
+        "*.log",
+        "dist",
+        "scripts"
+    ],
+    "ext": "js,json"
+}
