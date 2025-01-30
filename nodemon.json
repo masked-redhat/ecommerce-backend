@@ -6,6 +6,7 @@
         "db",
         "controllers",
         "constants",
+        "models",
         "app.js",
         "package.json"
     ],
