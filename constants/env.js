@@ -7,6 +7,19 @@ const APP = {
   PUBLIC: "./" + "public", // change according to your folder name
 };
 
+// Authentication
+const JWT = {
+  access: {
+    secret: process.env.ACCESS_TOKEN_SECRET,
+    expiry: process.env.ACCESS_TOKEN_EXPIRY,
+  },
+  refresh: {
+    secret: process.env.REFRESH_TOKEN_SECRET,
+    expiry: process.env.REFRESH_TOKEN_EXPIRY,
+    key: process.env.REFRESH_TOKEN_KEY,
+  },
+};
+
 // Mongodb
 const MONGODB = {
   URI: process.env.MONGO_DB_URI,
@@ -35,6 +48,9 @@ const _env = {
   db: {
     nosql: NOSQL_DB,
     sql: SQL_DB,
+  },
+  auth: {
+    jwt: JWT,
   },
 };
 
