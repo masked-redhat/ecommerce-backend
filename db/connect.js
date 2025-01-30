@@ -1,13 +1,15 @@
-import mongoose from "mongoose";
 import _env from "../constants/env.js";
 import retry from "../utils/reconnect.js";
 import { Sequelize } from "sequelize";
+import { createClient } from "redis";
 
 const DB = _env.db.sql; // sql database
 const SqlDatabase = new Sequelize(DB.DB, DB.USER, DB.PASS, {
   host: DB.HOST,
   dialect: DB.DIALECT,
 });
+
+export const client = createClient({ url: _env.db.nosql.URI });
 
 const stopVal = true,
   interval = 5000;
@@ -16,9 +18,9 @@ const connectToNoSqlDb = () => {
   retry(
     async () => {
       try {
-        await mongoose.connect(_env.db.nosql.URI);
+        await client.connect();
 
-        console.log("Connected to Mongo Db");
+        console.log("Connected to Redis");
         return true;
       } catch (err) {
         console.log(err);
@@ -51,8 +53,8 @@ const connectToSqlDb = () => {
 };
 
 const _connect = {
-  mongo: connectToNoSqlDb,
-  pg: connectToSqlDb,
+  nosql: connectToNoSqlDb,
+  sql: connectToSqlDb,
 };
 
 export const db = SqlDatabase;

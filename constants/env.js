@@ -7,9 +7,14 @@ const APP = {
   PUBLIC: "./" + "public", // change according to your folder name
 };
 
-// Mongodb as nosql db
+// Mongodb
 const MONGODB = {
   URI: process.env.MONGO_DB_URI,
+};
+
+// Redis
+const REDIS = {
+  URI: process.env.REDIS_DB_URI,
 };
 
 // Post gre sql database as sql db
@@ -22,7 +27,7 @@ const POSTGRESQL = {
 };
 
 // change according to your desired databases
-const NOSQL_DB = MONGODB;
+const NOSQL_DB = REDIS;
 const SQL_DB = POSTGRESQL;
 
 const _env = {

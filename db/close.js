@@ -1,14 +1,13 @@
-import mongoose from "mongoose";
-import { db } from "./connect.js";
+import { client, db } from "./connect.js";
 
 const closeNoSqlConnection = async () => {
   try {
-    await mongoose.connection.close();
+    await client.quit();
 
-    console.log("Closed Mongo Db");
+    console.log("Closed Redis Connection");
   } catch (err) {
     console.log(err);
-    console.log("Failed to close Mongo Db");
+    console.log("Failed to close Redis Connection");
   }
 };
 
@@ -24,8 +23,8 @@ const closeSqlConnection = async () => {
 };
 
 const _close = {
-  mongo: closeNoSqlConnection,
-  pg: closeSqlConnection,
+  nosql: closeNoSqlConnection,
+  sql: closeSqlConnection,
 };
 
 export default _close;

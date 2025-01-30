@@ -22,25 +22,22 @@ app.use(express.static(_env.app.PUBLIC));
 app.disable("x-powered-by");
 
 // Connect to databases
-_connect.mongo();
-_connect.pg();
+_connect.nosql();
+_connect.sql();
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// use of _routes
-// app.use("/custom_route", r.customRouter)
-
 const server = app.listen(port, () => {
   console.log(`Application started on http://${_env.app.HOST}:${port}`);
 });
 
-const shutDown = () => {
+const shutDown = async () => {
   // Close running services here
   server.close();
-  _close.mongo();
-  _close.pg();
+  await _close.nosql();
+  await _close.sql();
 
   console.debug("Gracefully closing the application");
 };
