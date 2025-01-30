@@ -10,6 +10,9 @@ const SqlDatabase = new Sequelize(DB.DB, DB.USER, DB.PASS, {
 });
 
 export const client = createClient({ url: _env.db.nosql.URI });
+client.on("error", (err) => {
+  console.error("Redis connection error:", err);
+});
 
 const stopVal = true,
   interval = 5000;
