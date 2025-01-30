@@ -12,7 +12,14 @@ const getUserDataByUsername = async (username) => {
       {
         model: Customer,
         foreignKey: "userId",
-        include: [{ model: Cart, foreignKey: "customerId" }],
+        include: [
+          {
+            model: Cart,
+            foreignKey: "customerId",
+            as: "cart",
+            attributes: { exclude: ["customerId", "createdAt"] },
+          },
+        ],
       },
       { model: Seller, foreignKey: "userId" },
     ],
