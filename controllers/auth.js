@@ -20,11 +20,17 @@ const generateRefreshToken = ({ key, value }) => {
 
 const verifyAccessToken = (accessToken) => {
   const data = jwt.verify(accessToken, act.secret);
+  delete data.iat;
+  delete data.exp;
+  
   return data;
 };
 
 const verifyRefreshToken = (refreshToken) => {
   const data = jwt.verify(refreshToken, rft.secret);
+  delete data.iat;
+  delete data.exp;
+  
   return data;
 };
 
