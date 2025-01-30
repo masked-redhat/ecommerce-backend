@@ -29,6 +29,7 @@
         "cookie-parser": "latest",
         "ecommerce-backend": "file:",
         "express": "latest",
+        "jsonwebtoken": "latest",
         "mongoose": "latest",
         "pg": "latest",
         "redis": "latest",
