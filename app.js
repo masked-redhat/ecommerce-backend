@@ -22,8 +22,8 @@ app.use(express.static(_env.app.PUBLIC));
 app.disable("x-powered-by");
 
 // Connect to databases
-_connect.nosql();
-_connect.sql();
+await _connect.nosql();
+await _connect.sql();
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -42,27 +42,27 @@ const shutDown = async () => {
   console.debug("Gracefully closing the application");
 };
 
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
   console.debug("Recieved SIGINT");
-  shutDown();
+  await shutDown();
 });
 
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
   console.debug("Recieved SIGTERM/(nodemon restarts)");
-  shutDown();
+  await shutDown();
 });
 
-process.on("uncaughtException", () => {
+process.on("uncaughtException", async () => {
   console.debug("Recieved Uncaught Exception");
-  shutDown();
+  await shutDown();
 });
 
-process.on("uncaughtExceptionMonitor", () => {
+process.on("uncaughtExceptionMonitor", async () => {
   console.debug("Recieved Uncaught Exception Monitor");
-  shutDown();
+  await shutDown();
 });
 
-process.on("unhandledRejection", () => {
+process.on("unhandledRejection", async () => {
   console.debug("Recieved unhandled Rejection");
-  shutDown();
+  await shutDown();
 });

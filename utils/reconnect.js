@@ -7,10 +7,12 @@
 const retry = async (func, stopVal = true, interval = 3000) => {
   const functionResult = await func();
   if (functionResult !== stopVal)
-    setTimeout(() => {
-      const functionResult = func();
-      if (functionResult !== stopVal) retry(func, stopVal, interval);
-    }, interval);
+    await Promise(() => {
+      setTimeout(() => {
+        const functionResult = func();
+        if (functionResult !== stopVal) retry(func, stopVal, interval);
+      }, interval);
+    });
 };
 
 export default retry;
