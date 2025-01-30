@@ -25,6 +25,7 @@
         "start": "npm run redis && node app.js"
     },
     "dependencies": {
+        "bcryptjs": "latest",
         "cookie-parser": "latest",
         "ecommerce-backend": "file:",
         "express": "latest",
