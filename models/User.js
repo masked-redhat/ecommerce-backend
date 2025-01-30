@@ -21,7 +21,7 @@ const User = db.define("User", {
     allowNull: false,
     set(value) {
       const updatedPassword = pass.secret + value + this.username; // join secret and username to password
-      this.setDataValue("password", bcryptjs.hash(updatedPassword, pass.salt)); // hash password and save
+      this.setDataValue("password", bcryptjs.hashSync(updatedPassword, pass.salt)); // hash password and save
     },
   },
   blocked: {
