@@ -19,9 +19,16 @@ const isUserBlocked = async (userId) => {
   return userData.blocked === true;
 };
 
+const isUsernameAvailable = async (username) => {
+  const user = await User.findOne({ where: { username } });
+
+  return user === null;
+};
+
 const _user = {
   getUserDataByUsername,
   isUserBlocked,
+  isUsernameAvailable,
 };
 
 export default _user;
