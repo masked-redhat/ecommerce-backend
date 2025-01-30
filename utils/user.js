@@ -1,10 +1,21 @@
 import _env from "../constants/env.js";
+import Cart from "../models/Cart.js";
+import Customer from "../models/Customer.js";
+import Seller from "../models/Seller.js";
 import User from "../models/User.js";
 
 const getUserDataByUsername = async (username) => {
   const user = await User.findOne({
     where: { username },
     attributes: ["id", "username", "blocked", "isSeller"],
+    include: [
+      {
+        model: Customer,
+        foreignKey: "userId",
+        include: [{ model: Cart, foreignKey: "customerId" }],
+      },
+      { model: Seller, foreignKey: "userId" },
+    ],
   });
 
   const userData = {
@@ -12,6 +23,8 @@ const getUserDataByUsername = async (username) => {
     username: user.username,
     blocked: user.blocked,
     isSeller: user.isSeller,
+    customer: user.Customer,
+    seller: user.Seller,
   };
 
   return userData;
