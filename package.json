@@ -30,6 +30,7 @@
         "express": "latest",
         "mongoose": "latest",
         "pg": "latest",
+        "redis": "latest",
         "sequelize": "latest"
     },
     "devDependencies": {
