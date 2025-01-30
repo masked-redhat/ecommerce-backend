@@ -12,63 +12,81 @@ const router = Router();
 router.post("/", async (req, res) => {
   const { username = null, password = null } = req.body;
 
-  const userData = await User.findOne({
-    where: { username },
-    attributes: ["blocked", "password"],
-  });
+  try {
+    const user = await User.findOne({
+      where: { username },
+      attributes: ["blocked", "password"],
+    });
 
-  if (userData === null)
-    return res.status(c.BAD_REQUEST).json("No user with that username");
+    if (user === null)
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "No user with that username" });
 
-  if (userData.blocked)
-    return res
-      .status(c.FORBIDDEN)
-      .json({ message: "User is blocked by admin" });
+    if (user.blocked === true)
+      return res
+        .status(c.FORBIDDEN)
+        .json({ message: "User is blocked by admin" });
 
-  if (!_password.comparePassword(password, userData.password))
-    return res.status(c.UNAUTHORIZED).json({ message: "Wrong password" });
+    if (_password.comparePassword(username, password, user.password) === false)
+      return res.status(c.UNAUTHORIZED).json({ message: "Wrong password" });
 
-  const _userData = await _user.getUserDataByUsername(username);
+    const userData = await _user.getUserDataByUsername(username);
 
-  const sessionId = await auth.setup(_userData);
+    const sessionId = await auth.setup(userData);
 
-  res.cookie(cookie.sessionId, sessionId, {
-    sameSite: "strict",
-    httpOnly: true,
-    secure: true,
-  });
+    res.cookie(cookie.sessionId, sessionId, {
+      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+    });
 
-  res.status(c.OK).json({ message: "User logged in successfully" });
+    res.status(c.OK).json({ message: "User logged in successfully" });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
 // Signup
 router.post("/new", async (req, res) => {
   const { username = null, password = null } = req.body;
 
-  if (username === null || password === null)
-    return res
-      .status(c.BAD_REQUEST)
-      .json({ message: "Required credentials missing" });
+  try {
+    if (username === null || password === null)
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "Required credentials missing" });
 
-  if (!(await _user.isUsernameAvailable(username)))
-    return res.status(c.CONFLICT).json({ message: "Username already taken" });
+    if (!(await _user.isUsernameAvailable(username)))
+      return res.status(c.CONFLICT).json({ message: "Username already taken" });
 
-  if (!_password.checkPassword(password))
-    return res
-      .status(c.BAD_REQUEST)
-      .json({ message: "Password doesn't adhere rules" });
+    if (!_password.checkPassword(password))
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "Password doesn't adhere rules" });
 
-  const userSave = await User.create({ username, password });
+    const userSave = await User.create({ username, password });
 
-  const sessionId = await auth.setup(userSave);
+    const userData = await _user.getUserDataByUsername(username);
 
-  res.cookie(cookie.sessionId, sessionId, {
-    sameSite: "strict",
-    httpOnly: true,
-    secure: true,
-  });
+    const sessionId = await auth.setup(userData);
 
-  res.status(c.CREATED).json({ message: "User created" });
+    res.cookie(cookie.sessionId, sessionId, {
+      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+    });
+
+    res.status(c.CREATED).json({ message: "User created" });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
 export const LoginRouter = router;
