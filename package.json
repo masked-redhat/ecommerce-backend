@@ -33,7 +33,8 @@
         "mongoose": "latest",
         "pg": "latest",
         "redis": "latest",
-        "sequelize": "latest"
+        "sequelize": "latest",
+        "uuid": "latest"
     },
     "devDependencies": {
         "dotenv": "latest",
