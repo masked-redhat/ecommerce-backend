@@ -72,6 +72,7 @@ const verifyConnection = async (req, res, next) => {
           .json({ message: "User is blocked by admin" });
 
       req.user = userData; // set user data
+      req.sessionId = sessionId; // set session id for logout
     } catch (err) {
       console.log(err);
       return res.status(c.FORBIDDEN).json({ message: "Invalid session" });
