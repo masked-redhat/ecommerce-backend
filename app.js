@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import _connect from "./db/connect.js";
 import r from "./routes/router.js";
 import _close from "./db/close.js";
+import check from "./middlewares/url.js";
 
 const app = express();
 const port = _env.app.PORT;
@@ -12,6 +13,7 @@ const port = _env.app.PORT;
 // middlewares
 app.use(cookieParser()); // application can use cookies
 app.use(helmet()); // security measures
+app.use(check.hostname); // check url from the host
 
 // public folder
 app.use(express.static(_env.app.PUBLIC));
