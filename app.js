@@ -41,36 +41,39 @@ const server = app.listen(port, () => {
   console.log(`Application started on http://${_env.app.HOST}:${port}`);
 });
 
-const shutDown = async () => {
-  // Close running services here
-  server.close();
-  await _close.nosql();
-  await _close.sql();
+// gracefull shutdown of application
+{
+  const shutDown = async () => {
+    // Close running services here
+    server.close();
+    await _close.nosql();
+    await _close.sql();
 
-  console.debug("Gracefully closing the application");
-};
+    console.debug("Gracefully closing the application");
+  };
 
-process.on("SIGINT", async () => {
-  console.debug("Recieved SIGINT");
-  await shutDown();
-});
+  process.on("SIGINT", async () => {
+    console.debug("Recieved SIGINT");
+    await shutDown();
+  });
 
-process.on("SIGTERM", async () => {
-  console.debug("Recieved SIGTERM/(nodemon restarts)");
-  await shutDown();
-});
+  process.on("SIGTERM", async () => {
+    console.debug("Recieved SIGTERM/(nodemon restarts)");
+    await shutDown();
+  });
 
-process.on("uncaughtException", async () => {
-  console.debug("Recieved Uncaught Exception");
-  await shutDown();
-});
+  process.on("uncaughtException", async () => {
+    console.debug("Recieved Uncaught Exception");
+    await shutDown();
+  });
 
-process.on("uncaughtExceptionMonitor", async () => {
-  console.debug("Recieved Uncaught Exception Monitor");
-  await shutDown();
-});
+  process.on("uncaughtExceptionMonitor", async () => {
+    console.debug("Recieved Uncaught Exception Monitor");
+    await shutDown();
+  });
 
-process.on("unhandledRejection", async () => {
-  console.debug("Recieved unhandled Rejection");
-  await shutDown();
-});
+  process.on("unhandledRejection", async () => {
+    console.debug("Recieved unhandled Rejection");
+    await shutDown();
+  });
+}
