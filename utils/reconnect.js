@@ -3,6 +3,7 @@
  * @param {[Function]} func
  * @param {[Any]} stopVal return value of function at which to not retry
  * @param {[Integer]} interval time in miliseconds
+ * @return {Promise<Boolean>}
  */
 const retry = async (func, stopVal = true, interval = 3000) => {
   const functionResult = await func();
