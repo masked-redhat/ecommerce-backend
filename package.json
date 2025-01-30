@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "cookie-parser": "latest",
+        "ecommerce-backend": "file:",
         "express": "latest",
         "mongoose": "latest",
         "pg": "latest",
