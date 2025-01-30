@@ -5,6 +5,7 @@ import _user from "../utils/user.js";
 import _password from "../utils/password.js";
 import auth from "../middlewares/auth.js";
 import cookie from "../constants/cookies.js";
+import { db } from "../db/connect.js";
 
 const router = Router();
 
@@ -54,6 +55,7 @@ router.post("/", async (req, res) => {
 router.post("/new", async (req, res) => {
   const { username = null, password = null } = req.body;
 
+  const t = await db.transaction();
   try {
     if (username === null || password === null)
       return res
@@ -68,7 +70,12 @@ router.post("/new", async (req, res) => {
         .status(c.BAD_REQUEST)
         .json({ message: "Password doesn't adhere rules" });
 
-    const userSave = await User.create({ username, password });
+    const userSave = await User.create(
+      { username, password },
+      { transaction: t }
+    );
+
+    await t.commit();
 
     const userData = await _user.getUserDataByUsername(username);
 
@@ -82,6 +89,7 @@ router.post("/new", async (req, res) => {
 
     res.status(c.CREATED).json({ message: "User created" });
   } catch (err) {
+    await t.rollback();
     console.log(err);
     res
       .status(c.INTERNAL_SERVER_ERROR)

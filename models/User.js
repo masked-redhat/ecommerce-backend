@@ -21,7 +21,10 @@ const User = db.define("User", {
     allowNull: false,
     set(value) {
       const updatedPassword = pass.secret + value + this.username; // join secret and username to password
-      this.setDataValue("password", bcryptjs.hashSync(updatedPassword, pass.salt)); // hash password and save
+      this.setDataValue(
+        "password",
+        bcryptjs.hashSync(updatedPassword, pass.salt)
+      ); // hash password and save
     },
   },
   blocked: {
@@ -43,5 +46,12 @@ Customer.belongsTo(User, { foreignKey: "userId" });
 // and one seller
 User.hasOne(Seller, { foreignKey: "userId", onDelete: "CASCADE" });
 Seller.belongsTo(User, { foreignKey: "userId" });
+
+User.afterCreate(async (payload, options) => {
+  await Customer.create(
+    { firstName: payload.username, userId: payload.id },
+    { transaction: options.transaction }
+  );
+});
 
 export default User;
