@@ -41,7 +41,6 @@ const connectToSqlDb = async () => {
     async () => {
       try {
         await SqlDatabase.authenticate();
-        SqlDatabase.sync({ alter: true });
 
         console.log("Connected to Sql Database");
         return true;
