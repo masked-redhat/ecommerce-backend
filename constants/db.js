@@ -17,10 +17,20 @@ const HANDLE = {
   limit: 32,
 };
 
+const PRODUCT = {
+  seller: {
+    limit: 30,
+  },
+  customer: {
+    limit: 30,
+  },
+};
+
 const attr = {
   id: ID,
   default: DEFAULT,
   handle: HANDLE,
+  product: PRODUCT,
 };
 
 export default attr;

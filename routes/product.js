@@ -5,8 +5,11 @@ import { db } from "../db/connect.js";
 import Variant from "../models/products/Variant.js";
 import handle from "../utils/handle.js";
 import Seller from "../models/Seller.js";
+import attr from "../constants/db.js";
 
 const router = Router();
+
+const CUSTOMER_LIMIT = attr.product.customer.limit;
 
 // get product details
 router.get("/:handle", async (req, res) => {
@@ -39,6 +42,37 @@ router.get("/:handle", async (req, res) => {
       message: "Got product details for you",
       details: productDetails,
     });
+  } catch (err) {
+    console.log(err);
+
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+});
+
+// get products
+router.get("/", async (req, res) => {
+  const { offset = 0 } = req.query;
+
+  try {
+    const products = await Product.findAll({
+      attributes: { exclude: ["id", "sellerId"] },
+      include: [
+        {
+          model: Seller,
+          foreignKey: "sellerId",
+          attributes: ["name", "handle"],
+          as: "seller",
+        },
+        { model: Variant, attributes: { exclude: ["id", "productId"] } },
+      ],
+      limit: CUSTOMER_LIMIT,
+      offset,
+      order: [["updatedAt", "DESC"]],
+    });
+
+    res.status(c.OK).json({ message: "Products", products });
   } catch (err) {
     console.log(err);
 

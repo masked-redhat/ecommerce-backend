@@ -7,6 +7,11 @@ import _password from "../utils/password.js";
 import { db } from "../db/connect.js";
 import auth from "../middlewares/auth.js";
 import handle from "../utils/handle.js";
+import Product from "../models/products/Product.js";
+import Variant from "../models/products/Variant.js";
+import attr from "../constants/db.js";
+
+const SELLER_LIMIT = attr.product.seller.limit;
 
 const router = Router();
 
@@ -51,6 +56,36 @@ router.get("/", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+});
+
+// get products by seller
+router.get("/products", async (req, res) => {
+  const sellerId = req.user.seller.id;
+
+  if (req.user.isSeller === false)
+    return res.status(c.FORBIDDEN).json({ message: "You are not a seller" });
+
+  const { offset = 0 } = req.query;
+
+  try {
+    const products = await Product.findAll({
+      where: { sellerId },
+      attributes: { exclude: ["id", "sellerId"] },
+      include: [
+        { model: Variant, attributes: { exclude: ["id", "productId"] } },
+      ],
+      limit: SELLER_LIMIT,
+      offset,
+    });
+
+    res.status(c.OK).json({ message: "Your products", products });
+  } catch (err) {
+    console.log(err);
+
     res
       .status(c.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
