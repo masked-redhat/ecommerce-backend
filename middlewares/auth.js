@@ -26,6 +26,21 @@ const setupAuthentication = async (userData, key = REFERSH_KEY) => {
   return sessionId;
 };
 
+const resetAuthentication = async (username, req, res) => {
+  const userData = await _user.getUserDataByUsername(username);
+
+  const sessionId = await setupAuthentication(userData);
+
+  await client.del(req.sessionId); // remove from db
+
+  // update the sessionId cookie
+  res.cookie(cookie.sessionId, sessionId, {
+    sameSite: "strict",
+    httpOnly: true,
+    secure: true,
+  });
+};
+
 const verifyTokens = async ({ access, refresh }) => {
   try {
     // check the access token first
@@ -91,6 +106,7 @@ const verifyConnection = async (req, res, next) => {
 const auth = {
   setup: setupAuthentication,
   verify: verifyConnection,
+  resetup: resetAuthentication,
 };
 
 export default auth;

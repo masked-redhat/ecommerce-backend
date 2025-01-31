@@ -13,9 +13,14 @@ const DEFAULT = {
   INTEGER: 0,
 };
 
+const HANDLE = {
+  limit: 20,
+};
+
 const attr = {
   id: ID,
   default: DEFAULT,
+  handle: HANDLE,
 };
 
 export default attr;
