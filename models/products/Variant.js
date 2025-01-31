@@ -8,6 +8,7 @@ const Variant = db.define("Variant", {
     type: dt.STRING,
     allowNull: false,
     defaultValue: attr.default.STRING,
+    unique: true,
   },
   price: {
     type: dt.INTEGER,
