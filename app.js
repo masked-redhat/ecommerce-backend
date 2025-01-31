@@ -41,6 +41,7 @@ app.get("/test", (req, res) => {
 
 app.use("/seller", r.seller); // seller
 app.use("/product", r.product); // products
+app.use("/cart", r.cart); // cart
 app.use("/logout", r.logout); // logout
 
 // for all other endpoints
