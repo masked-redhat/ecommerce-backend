@@ -1,8 +1,6 @@
 import { DataTypes as dt } from "sequelize";
 import attr from "../constants/db.js";
 import { db } from "../db/connect.js";
-import Customer from "./Customer.js";
-import Seller from "./Seller.js";
 import bcryptjs from "bcryptjs";
 import pass from "../constants/password.js";
 
@@ -37,21 +35,6 @@ const User = db.define("User", {
     defaultValue: false,
     allowNull: false,
   },
-});
-
-// A user can be only one customer,
-User.hasOne(Customer, { foreignKey: "userId", onDelete: "CASCADE" });
-Customer.belongsTo(User, { foreignKey: "userId" });
-
-// and one seller
-User.hasOne(Seller, { foreignKey: "userId", onDelete: "CASCADE" });
-Seller.belongsTo(User, { foreignKey: "userId" });
-
-User.afterCreate(async (payload, options) => {
-  await Customer.create(
-    { firstName: payload.username, userId: payload.id },
-    { transaction: options.transaction }
-  );
 });
 
 export default User;

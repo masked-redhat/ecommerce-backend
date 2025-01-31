@@ -7,6 +7,7 @@ import _close from "./db/close.js"; // db functions
 import r from "./routes/router.js"; // routes
 import check from "./middlewares/url.js";
 import auth from "./middlewares/auth.js";
+import initAssociations from "./associations/association.js";
 
 const app = express();
 const port = _env.app.PORT;
@@ -30,6 +31,9 @@ app.disable("x-powered-by");
 // Connect to databases
 await _connect.nosql();
 await _connect.sql();
+
+// setup association between sql tables
+initAssociations();
 
 app.get("/test", (req, res) => {
   res.send(req.user);
