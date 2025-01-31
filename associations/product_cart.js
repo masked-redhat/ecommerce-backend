@@ -4,7 +4,7 @@ import Variant from "../models/products/Variant.js";
 
 const productCartAssociations = () => {
   // a product cart will have one variant of a product
-  Variant.hasMany(ProductCart, { foreignKey: "variantId", onDelete: "SET NULL" });
+  Variant.hasMany(ProductCart, { foreignKey: "variantId", onDelete: "CASCADE" });
   ProductCart.belongsTo(Variant, { foreignKey: "variantId" });
 
   // Creating product cart adds in cart
