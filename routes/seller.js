@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
   try {
     const sellerInfo = await Seller.findOne({
       where: { ...(handle === null ? { userId } : { handle }) },
-      attributes: ["name", "products"],
+      attributes: ["name", "products", "handle"],
       include: [
         {
           model: Address,
@@ -46,6 +46,7 @@ router.get("/", async (req, res) => {
 
     const _sellerInfo = {
       name: sellerInfo.name,
+      handle: sellerInfo.handle,
       products: sellerInfo.products,
       branches: sellerInfo.Addresses,
     };
@@ -64,7 +65,7 @@ router.get("/", async (req, res) => {
 
 // get products by seller
 router.get("/products", async (req, res) => {
-  const sellerId = req.user.seller.id;
+  const sellerId = req.user.seller?.id;
 
   if (req.user.isSeller === false)
     return res.status(c.FORBIDDEN).json({ message: "You are not a seller" });
@@ -144,14 +145,74 @@ router.post("/new", async (req, res) => {
   }
 });
 
-// patch the seller info
+// patch the seller info, name is the only changing option
 router.patch("/", async (req, res) => {
-  // TODO: complete these functions
+  const sellerId = req.user.seller?.id;
+
+  if (req.user.isSeller === false)
+    return res.status(c.FORBIDDEN).json({ message: "You are not a seller" });
+
+  const { name = null } = req.body;
+
+  if (name === null || typeof name !== "string")
+    return res
+      .status(c.BAD_REQUEST)
+      .json({ message: "Required info not given or given in bad format" });
+
+  try {
+    const updateResult = await Seller.update(
+      { name },
+      { where: { id: sellerId }, individualHooks: true }
+    );
+
+    res.status(c.OK).json({ message: "Info Updated" });
+  } catch (err) {
+    console.log(err);
+
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
-// update the seller info
+// update the seller info, change the name and also delete all the products
+// of this seller
 router.put("/", async (req, res) => {
-  // TODO: complete these functions
+  const sellerId = req.user.seller?.id;
+
+  if (req.user.isSeller === false)
+    return res.status(c.FORBIDDEN).json({ message: "You are not a seller" });
+
+  const { name = null } = req.body;
+
+  if (name === null || typeof name !== "string")
+    return res
+      .status(c.BAD_REQUEST)
+      .json({ message: "Required info not given or given in bad format" });
+
+  const t = await db.transaction();
+  try {
+    const updateResult = await Seller.update(
+      { name },
+      { where: { id: sellerId }, transaction: t, individualHooks: true }
+    );
+
+    const destroyResult = await Product.destroy({
+      where: { sellerId },
+      transaction: t,
+      individualHooks: true,
+    });
+    await t.commit();
+
+    res.status(c.OK).json({ message: "Info Updated" });
+  } catch (err) {
+    await t.rollback();
+    console.log(err);
+
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
 // delete seller account
