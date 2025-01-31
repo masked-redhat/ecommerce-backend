@@ -39,6 +39,11 @@ app.use("/seller", r.seller); // seller
 app.use("/product", r.product); // products
 app.use("/logout", r.logout); // logout
 
+// for all other endpoints
+app.all("*", (_, res) => {
+  res.sendStatus(404);
+});
+
 const server = app.listen(port, () => {
   console.log(`Application started on http://${_env.app.HOST}:${port}`);
 });
