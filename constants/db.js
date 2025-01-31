@@ -14,7 +14,7 @@ const DEFAULT = {
 };
 
 const HANDLE = {
-  limit: 20,
+  limit: 32,
 };
 
 const attr = {

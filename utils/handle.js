@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import attr from "../constants/db.js";
 
-const nameLength = 8;
+const nameLength = 12;
+const uniqValLength = 8;
 
-const createHandle = (name, uniqVal) => {
-  uniqVal = uniqVal.replaceAll("-", "").substring(0, 6);
+const createHandle = (name, uniqVal = Date.now().toString()) => {
+  uniqVal = uniqVal.replaceAll("-", "").substring(0, uniqValLength);
 
   name = name.replace(/[^a-zA-Z]/g, "");
   const nameLen = name.length > nameLength ? nameLength : name.length;

@@ -28,7 +28,7 @@ const Seller = db.define("Seller", {
 
 // Seller has many products
 Seller.hasMany(Product, { foreignKey: "sellerId", onDelete: "CASCADE" });
-Product.belongsTo(Seller, { foreignKey: "sellerId" });
+Product.belongsTo(Seller, { foreignKey: "sellerId", as: "seller" });
 
 // Seller can have many branches at different addresses
 Seller.hasMany(Address, { foreignKey: "sellerId", onDelete: "SET NULL" });

@@ -10,6 +10,11 @@ const Product = db.define("Product", {
     allowNull: false,
   },
   description: dt.TEXT,
+  handle: {
+    type: dt.STRING,
+    allowNull: false,
+    unique: true,
+  },
   variantTitle: {
     type: dt.STRING,
     allowNull: false,
@@ -23,7 +28,19 @@ const Product = db.define("Product", {
 });
 
 // a product can have many variants
-Product.hasMany(Variant, { foreignKey: "productId", onDelete: "SET NULL" });
+Product.hasMany(Variant, {
+  foreignKey: "productId",
+  onDelete: "SET NULL",
+});
 Variant.belongsTo(Product, { foreignKey: "productId" });
+
+// increments the products variants number upon creating
+Variant.beforeCreate(async (payload, options) => {
+  await Product.increment("variants", {
+    by: 1,
+    where: { id: payload.productId },
+    transaction: options.transaction,
+  });
+});
 
 export default Product;

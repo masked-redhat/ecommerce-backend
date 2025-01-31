@@ -36,6 +36,7 @@ app.get("/test", (req, res) => {
 });
 
 app.use("/seller", r.seller); // seller
+app.use("/product", r.product); // products
 app.use("/logout", r.logout); // logout
 
 const server = app.listen(port, () => {
