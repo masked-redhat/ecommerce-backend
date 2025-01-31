@@ -106,7 +106,8 @@ router.post("/", async (req, res) => {
       .status(c.BAD_REQUEST)
       .json({ message: "Required information not given" });
 
-  if (variants.length === 0) variants.push({ name, price });
+  if (variants.length === 0)
+    variants.push({ name: attr.default.STRING, price });
 
   for (const variant of variants) {
     if (typeof variant?.name !== "string" || typeof variant?.price !== "number")
