@@ -50,4 +50,22 @@ Seller.beforeDestroy(async (payload, options) => {
   );
 });
 
+// increase products when created
+Product.afterCreate(async (payload, options) => {
+  await Seller.increment("products", {
+    by: 1,
+    where: { id: payload.sellerId },
+    transaction: options.transaction,
+  });
+});
+
+// decrease products when created
+Product.afterDestroy(async (payload, options) => {
+  await Seller.decrement("products", {
+    by: 1,
+    where: { id: payload.sellerId },
+    transaction: options.transaction,
+  });
+});
+
 export default Seller;
