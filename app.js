@@ -31,10 +31,11 @@ app.disable("x-powered-by");
 await _connect.nosql();
 await _connect.sql();
 
-app.get("/", (req, res) => {
-  res.sendFile("index.html");
+app.get("/test", (req, res) => {
+  res.send(req.user);
 });
 
+app.use("/seller", r.seller); // seller
 app.use("/logout", r.logout); // logout
 
 const server = app.listen(port, () => {
