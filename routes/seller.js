@@ -94,7 +94,7 @@ router.post("/new", async (req, res) => {
     );
     await t.commit();
 
-    await auth.resetup(username, req, res); // update the cookies for user
+    await auth.resetup(req, res); // update the cookies for user
 
     res
       .status(c.CREATED)
@@ -138,7 +138,7 @@ router.delete("/", async (req, res) => {
     });
     await t.commit();
 
-    await auth.resetup(req.user.username, req, res);
+    await auth.resetup(req, res);
 
     res.sendStatus(c.NO_CONTENT);
   } catch (err) {

@@ -26,8 +26,8 @@ const setupAuthentication = async (userData, key = REFERSH_KEY) => {
   return sessionId;
 };
 
-const resetAuthentication = async (username, req, res) => {
-  const userData = await _user.getUserDataByUsername(username);
+const resetAuthentication = async (req, res) => {
+  const userData = await _user.getUserDataByUsername(req.user.username);
 
   const sessionId = await setupAuthentication(userData);
 
