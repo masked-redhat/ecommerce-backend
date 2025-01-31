@@ -10,7 +10,7 @@ const Seller = db.define("Seller", {
     type: dt.TEXT,
     allowNull: false,
     set(value) {
-      this.setDataValue("username", value.trim());
+      this.setDataValue("name", value.trim());
     },
   },
   products: {
