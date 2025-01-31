@@ -57,19 +57,12 @@ router.get("/", async (req, res) => {
 
   try {
     const products = await Product.findAll({
-      attributes: { exclude: ["id", "sellerId"] },
+      attributes: ["name", "handle"],
       include: [
-        {
-          model: Seller,
-          foreignKey: "sellerId",
-          attributes: ["name", "handle"],
-          as: "seller",
-        },
         { model: Variant, attributes: { exclude: ["id", "productId"] } },
       ],
       limit: CUSTOMER_LIMIT,
       offset,
-      order: [["updatedAt", "DESC"]],
     });
 
     res.status(c.OK).json({ message: "Products", products });
@@ -84,7 +77,7 @@ router.get("/", async (req, res) => {
 
 // add a product
 router.post("/", async (req, res) => {
-  const sellerId = req.user.seller.id;
+  const sellerId = req.user.seller?.id;
 
   if (req.user.isSeller === false)
     return res.status(c.FORBIDDEN).json({ message: "Not a seller account" });
@@ -170,21 +163,26 @@ router.put("/", async (req, res) => {
 
 // delete the product
 router.delete("/:handle", async (req, res) => {
-  const sellerId = req.user.seller.id;
+  const sellerId = req.user.seller?.id;
 
   if (req.user.isSeller === false)
     return res.status(c.FORBIDDEN).json({ message: "You are not a seller" });
 
   const { handle } = req.params;
 
+  const t = await db.transaction();
   try {
     const destroyResult = await Product.destroy({
       where: { handle, sellerId },
+      transaction: t,
       individualHooks: true,
     });
 
+    await t.commit();
+
     res.sendStatus(c.NO_CONTENT);
   } catch (err) {
+    await t.rollback();
     console.log(err);
 
     res

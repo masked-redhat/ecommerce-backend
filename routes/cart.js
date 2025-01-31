@@ -54,9 +54,18 @@ router.get("/", async (req, res) => {
       ],
     });
 
+    // sync the items number in cart
+    // after deleting a product, the items was not updating *
+    // so had to do a sync here *
+    // no await for ux
+    const updateResult = Cart.update(
+      { items: cart?.products.length ?? 0 },
+      { where: { customerId }, individualHooks: true }
+    );
+
     // customize the cart
     const _cart = {
-      items: cart.items,
+      items: cart?.products.length,
       updatedAt: cart.updatedAt,
     };
 
@@ -144,11 +153,11 @@ router.patch("/add", async (req, res) => {
       );
     }
 
-    res
-      .status(c.OK)
-      .json({
-        message: `Product ${alreadyCarted === null ? "added" : "updated"}`,
-      });
+    await t.commit();
+
+    res.status(c.OK).json({
+      message: `Product ${alreadyCarted === null ? "added" : "updated"}`,
+    });
   } catch (err) {
     await t.rollback();
     console.log(err);

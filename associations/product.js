@@ -4,10 +4,7 @@ import Seller from "../models/Seller.js";
 
 const productAssociations = () => {
   // a product can have many variants
-  Product.hasMany(Variant, {
-    foreignKey: "productId",
-    onDelete: "SET NULL",
-  });
+  Product.hasMany(Variant, { foreignKey: "productId", onDelete: "CASCADE" });
   Variant.belongsTo(Product, { foreignKey: "productId" });
 
   // increase products when created
