@@ -153,12 +153,169 @@ router.post("/", async (req, res) => {
 
 // update the product details
 router.patch("/", async (req, res) => {
-  // TODO: create function to update product features
+  const sellerId = req.user.seller?.id;
+
+  if (req.user.isSeller === false)
+    return res.status(c.FORBIDDEN).json({ message: "Not a seller account" });
+
+  const {
+    name = null,
+    description = null,
+    variantTitle = null,
+    variants = [],
+    handle = null,
+  } = req.body;
+
+  if (handle === null)
+    return res
+      .status(c.BAD_REQUEST)
+      .json({ message: "Required info not given" });
+
+  for (const variant of variants) {
+    if (typeof variant?.name !== "string" || typeof variant?.price !== "number")
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "Required formatting not applied" });
+  }
+
+  const t = await db.transaction();
+  try {
+    // get product Id
+    const product = await Product.findOne({
+      where: { handle, sellerId },
+      attributes: ["id"],
+    });
+
+    if (product === null) {
+      await t.rollback();
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "You don't own this product" });
+    }
+
+    const updateResult = await Product.update(
+      {
+        ...(name === null ? {} : { name }),
+        ...(description === null ? {} : { description }),
+        ...(variantTitle === null ? {} : { variantTitle }),
+      },
+      { where: { handle, sellerId }, transaction: t, individualHooks: true }
+    );
+
+    // update variants if only it is asked, replace all variants
+    if (variants.length >= 1) {
+      // delete all variants of this product
+      const destroyResult = await Variant.destroy({
+        where: { productId: product.id },
+        transaction: t,
+        individualHooks: true,
+      });
+
+      // now put each variant
+      for (const variant of variants) {
+        const updateResult = await Variant.create(
+          {
+            name: variant.name,
+            price: variant.price,
+            productId: product.id,
+          },
+          { transaction: t }
+        );
+      }
+    }
+    await t.commit();
+
+    res.status(c.OK).json({ message: "Product updated" });
+  } catch (err) {
+    await t.rollback();
+    console.log(err);
+
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
 // update the product details
 router.put("/", async (req, res) => {
-  // TODO: create function to update product features
+  const sellerId = req.user.seller?.id;
+
+  if (req.user.isSeller === false)
+    return res.status(c.FORBIDDEN).json({ message: "Not a seller account" });
+
+  const {
+    name = null,
+    description = null,
+    variantTitle = null,
+    variants = [],
+    handle = null,
+  } = req.body;
+
+  if (handle === null || name === null || variants.length < 1)
+    return res
+      .status(c.BAD_REQUEST)
+      .json({ message: "Required info not given" });
+
+  for (const variant of variants) {
+    if (typeof variant?.name !== "string" || typeof variant?.price !== "number")
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "Required formatting not applied" });
+  }
+
+  const t = await db.transaction();
+  try {
+    // get product Id
+    const product = await Product.findOne({
+      where: { handle, sellerId },
+      attributes: ["id"],
+    });
+
+    if (product === null) {
+      await t.rollback();
+      return res
+        .status(c.BAD_REQUEST)
+        .json({ message: "You don't own this product" });
+    }
+
+    const updateResult = await Product.update(
+      {
+        name,
+        description,
+        ...(variantTitle === null ? {} : { variantTitle }),
+      },
+      { where: { handle, sellerId }, transaction: t, individualHooks: true }
+    );
+
+    // delete all variants of this product
+    const destroyResult = await Variant.destroy({
+      where: { productId: product.id },
+      transaction: t,
+      individualHooks: true,
+    });
+
+    // now put each variant again
+    for (const variant of variants) {
+      const updateResult = await Variant.create(
+        {
+          name: variant.name,
+          price: variant.price,
+          productId: product.id,
+        },
+        { transaction: t }
+      );
+    }
+    await t.commit();
+
+    res.status(c.OK).json({ message: "Product updated" });
+  } catch (err) {
+    await t.rollback();
+    console.log(err);
+
+    res
+      .status(c.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
 });
 
 // delete the product
