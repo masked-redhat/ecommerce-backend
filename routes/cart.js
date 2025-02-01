@@ -168,6 +168,7 @@ router.patch("/add", async (req, res) => {
   }
 });
 
+// remove product from cart
 router.patch("/remove", async (req, res) => {
   const cartId = req.user.customer.cart.id;
 
