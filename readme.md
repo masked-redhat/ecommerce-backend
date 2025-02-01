@@ -13,6 +13,17 @@ Project on e-commerce backend having following functionalities
 
 There are infinite stocks of the product that user can buy
 
+### libraries this project depend on
+
+#### databases
+
+- redis
+- pg
+
+- sequelize
+- node-redis
+- jsonwebtoken
+
 ## Current progress and report
 
 Project can handle:
