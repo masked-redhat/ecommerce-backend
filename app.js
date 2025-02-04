@@ -35,10 +35,6 @@ await _connect.sql();
 // setup association between sql tables
 initAssociations();
 
-app.get("/test", (req, res) => {
-  res.send(req.user);
-});
-
 app.use("/seller", r.seller); // seller
 app.use("/product", r.product); // products
 app.use("/cart", r.cart); // cart
