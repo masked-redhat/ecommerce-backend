@@ -7,6 +7,7 @@ const DB = _env.db.sql; // sql database
 const SqlDatabase = new Sequelize(DB.DB, DB.USER, DB.PASS, {
   host: DB.HOST,
   dialect: DB.DIALECT,
+  logging: false // sql queries will not log
 });
 
 export const client = createClient({ url: _env.db.nosql.URI });
